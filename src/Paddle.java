@@ -8,7 +8,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
+import java.awt.Rectangle;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -20,33 +20,34 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import java.awt.Color;
 
-public class Paddle extends JPanel implements KeyListener {
+public class Paddle extends Rectangle implements KeyListener, Runnable {
 	private int x = 0;
 	private double y = 0;
 	private int playerNumber;
+	private int screenWidth, screenHeight;
+	Graphics graph;
+	Thread thread;
 
-	public Paddle(int x, double y, int playerNumber) {
+	public Paddle(int x, double y, int width, int height, int playerNumber, int screenWidth, int screenHeight) {
+		super(x, (int) y, width, height);
 		this.x = x;
 		this.y = y;
 		this.playerNumber = playerNumber;
-		addKeyListener(this);
-		setFocusable(true);
-		requestFocus();
+		thread = new Thread(this);
+		this.screenWidth = screenWidth;
+		this.screenHeight = screenHeight;
+		// System.out.println("Screen Width: " + this.screenWidth +" and Screen Height:
+		// " + this.screenHeight);
+
 	}
 
 	public void paint(Graphics g) {
-		super.paint(g);
-		Graphics2D g2d = (Graphics2D) g;
-		g.setColor(Color.WHITE);
-		g.fillRect(x, (int) y, 15, 80);
+		if (playerNumber == 1)
+			g.setColor(Color.BLUE);
+		else
+			g.setColor(Color.RED);
+		g.fillRect(x, (int) y, width, height);
 
-		try {
-			Thread.sleep(50);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		repaint();
 	}
 
 	@Override
@@ -60,16 +61,30 @@ public class Paddle extends JPanel implements KeyListener {
 		switch (playerNumber) {
 		case 1:
 			if (e.getKeyCode() == KeyEvent.VK_UP)
-				y -= 10;
+				if (y == 0)
+					y = y;
+				else
+					move(-10);
+
 			else if (e.getKeyCode() == KeyEvent.VK_DOWN)
-				y += 10;
+				if (y == 410)
+					y = y;
+				else
+					move(10);
 			break;
 
 		case 2:
-			if(e.getKeyCode() == KeyEvent.VK_W)
-				y -= 10;
-			else if(e.getKeyCode() == KeyEvent.VK_S)
-				y += 10;
+			if (e.getKeyCode() == KeyEvent.VK_W)
+				if (y == 0)
+					y = y;
+				else
+					move(-10);
+
+			else if (e.getKeyCode() == KeyEvent.VK_S)
+				if (y == 410)
+					y = y;
+				else
+					move(10);
 			break;
 
 		}
@@ -78,7 +93,25 @@ public class Paddle extends JPanel implements KeyListener {
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
+		move(0);
 
+	}
+
+	@Override
+	public void run() {
+		move(-10);
+
+	}
+
+	public void move(int step) {
+		y += step;
+	}
+
+	public int getXPos() {
+		return x;
+	}
+
+	public int getYPos() {
+		return (int) y;
 	}
 }

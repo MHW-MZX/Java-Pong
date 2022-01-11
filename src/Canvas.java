@@ -10,17 +10,21 @@ import java.awt.Graphics2D;
 public class Canvas extends JFrame {
 JPanel panel;
 JLabel label;
-Paddle pad1,pad2;
+ 
+/**
+ * Default Constructor for the Canvas Class
+ */
 	public Canvas() {
-		pad1 = new Paddle(5,10,1);
-		pad2 = new Paddle(400,10,2);
+		
 		this.setSize(new Dimension(500,500));
+		this.setTitle("Pong Made By Malik Zurkiyeh");
 		this.getContentPane().setBackground(Color.black);
-		this.add(pad2);
+		this.add(new Panel(this.getWidth(),this.getHeight()));
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setLocationRelativeTo(null);
+		System.out.printf("JFrame width: %d and height: %d ", this.getWidth(),this.getHeight());
 		
 	}
 }
